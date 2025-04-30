@@ -1,5 +1,6 @@
 package com.example.bioinf.ui.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bioinf.ApiService
@@ -7,7 +8,6 @@ import com.example.bioinf.PredictionRequest
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
 
 class PredictionViewModel : ViewModel() {
     private val apiService = ApiService.create()
@@ -21,16 +21,24 @@ class PredictionViewModel : ViewModel() {
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
-    fun makePrediction(features: List<Double>) {
-        _isLoading.value = true
+    fun predictFromFile(context: Context) {
         viewModelScope.launch {
+            _isLoading.value = true
             try {
-                val response = apiService.predict(PredictionRequest(features))
+                val features = context.assets.open("features.txt")
+                    .bufferedReader()
+                    .use { it.readText() }
+                    .trim()
+                    .split(",")
+                    .map { it.trim().toDouble() }
+
+                val request = PredictionRequest(features = features)
+                val response = apiService.predict(request)
+
                 _predictionResult.value = response.prediction
-            } catch (e: HttpException) {
-                _errorMessage.value = "Ошибка сервера: ${e.response()?.errorBody()?.string()}"
+
             } catch (e: Exception) {
-                _errorMessage.value = "Сетевая ошибка: ${e.localizedMessage}"
+                _errorMessage.value = "Ошибка: ${e.localizedMessage}"
             } finally {
                 _isLoading.value = false
             }

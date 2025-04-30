@@ -12,6 +12,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import com.example.bioinf.ui.screen.BioInfApplication
 import com.example.bioinf.ui.theme.BioinfTheme
 import com.example.bioinf.ui.viewmodel.PredictionViewModel
@@ -29,6 +30,8 @@ class MainActivity : ComponentActivity() {
                 val isLoading by viewModel.isLoading.collectAsState()
                 val errorMessage by viewModel.errorMessage.collectAsState()
 
+                val context = LocalContext.current
+
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     BioInfApplication(
                         modifier = Modifier
@@ -37,8 +40,10 @@ class MainActivity : ComponentActivity() {
                         predictionResult = predictionResult,
                         isLoading = isLoading,
                         errorMessage = errorMessage,
-                        onPredictRequest = { features ->
-                            viewModel.makePrediction(features)
+                        onClickPredict = {
+                            viewModel.predictFromFile(
+                                context = context
+                            )
                         }
                     )
                 }
