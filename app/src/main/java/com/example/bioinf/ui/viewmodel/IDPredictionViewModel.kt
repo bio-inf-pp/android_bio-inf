@@ -1,19 +1,19 @@
 package com.example.bioinf.ui.viewmodel
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bioinf.data.ApiService
-import com.example.bioinf.model.PredictionRequest
+import com.example.bioinf.model.IDRequest
+import com.example.bioinf.model.IDResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class PredictionViewModel : ViewModel() {
+class IDPredictionViewModel : ViewModel() {
     private val apiService = ApiService.create()
 
-    private val _predictionResult = MutableStateFlow<Float?>(null)
-    val predictionResult: StateFlow<Float?> = _predictionResult
+    private val _predictionResult = MutableStateFlow<IDResponse?>(null)
+    val predictionResult: StateFlow<IDResponse?> = _predictionResult
 
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage
@@ -21,22 +21,12 @@ class PredictionViewModel : ViewModel() {
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
-    fun predictFromFile(context: Context) {
+    fun predictById(tcgaId: String, ensemblId: String) {
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                val features = context.assets.open("features.txt")
-                    .bufferedReader()
-                    .use { it.readText() }
-                    .trim()
-                    .split(",")
-                    .map { it.trim().toDouble() }
-
-                val request = PredictionRequest(features = features)
-                val response = apiService.predict(request)
-
-                _predictionResult.value = response.prediction
-
+                val response = apiService.predictById(IDRequest(tcgaId, ensemblId))
+                _predictionResult.value = response
             } catch (e: Exception) {
                 _errorMessage.value = "Ошибка: ${e.localizedMessage}"
             } finally {

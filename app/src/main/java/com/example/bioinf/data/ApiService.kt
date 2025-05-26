@@ -1,5 +1,9 @@
-package com.example.bioinf
+package com.example.bioinf.data
 
+import com.example.bioinf.model.IDRequest
+import com.example.bioinf.model.IDResponse
+import com.example.bioinf.model.PredictionRequest
+import com.example.bioinf.model.PredictionResponse
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -20,8 +24,12 @@ interface ApiService {
         @Part file: MultipartBody.Part
     ): PredictionResponse
 
+    @POST("predict_by_id")
+    suspend fun predictById(@Body request: IDRequest): IDResponse
+
+
     companion object {
-        private const val BASE_URL = "https://ea9e-35-194-70-112.ngrok-free.app/"
+        private const val BASE_URL = "https://c4d1-34-73-147-116.ngrok-free.app"
 
         fun create(): ApiService {
             val httpClient = OkHttpClient.Builder()
@@ -39,6 +47,3 @@ interface ApiService {
         }
     }
 }
-
-data class PredictionRequest(val features: List<Double>)
-data class PredictionResponse(val prediction: Float)
