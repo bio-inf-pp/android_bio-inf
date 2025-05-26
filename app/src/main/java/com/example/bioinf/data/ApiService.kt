@@ -29,11 +29,11 @@ interface ApiService {
     @POST("predict_by_id")
     suspend fun predictById(@Body request: IDRequest): IDResponse
 
-    @POST("predict_by_id")
+    @POST("predict_by_tcga")
     suspend fun predictTsgaById(@Body request: TCGARequest): TCGAResponse
 
     companion object {
-        private const val BASE_URL = "https://060f-34-73-147-116.ngrok-free.app"
+        private const val BASE_URL = "https://59df-34-73-147-116.ngrok-free.app"
 
         fun create(): ApiService {
             val httpClient = OkHttpClient.Builder()

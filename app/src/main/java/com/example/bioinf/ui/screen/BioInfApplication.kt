@@ -48,10 +48,13 @@ fun BioInfApplication(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text(
-            text = "Результат: ${predictionResult}",
-            style = MaterialTheme.typography.headlineSmall
-        )
+        predictionResult?.let{
+            Text(
+                text = "Результат: ${predictionResult}",
+                style = MaterialTheme.typography.headlineSmall
+            )
+        }
+
 
         errorMessage?.let {
             Text(

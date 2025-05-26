@@ -29,6 +29,7 @@ import com.example.bioinf.ui.viewmodel.TCGAViewModel
 
 @Composable
 fun TCGAPredictionScreen(viewModel: TCGAViewModel) {
+    val prediction = viewModel.predictionResult.collectAsState().value
     var tcgaId by remember { mutableStateOf("") }
 
     Column(
@@ -69,14 +70,23 @@ fun TCGAPredictionScreen(viewModel: TCGAViewModel) {
                         Text("Предсказать вероятность рака")
                     }
                 }
-
                 Spacer(modifier = Modifier.height(16.dp))
 
-                viewModel.predictionResult.collectAsState().value?.let { prediction ->
+                if (prediction.predictionResult != null && prediction.predictionPresent != null) {
                     Text(
-                        text = "Вероятность рака предстательной железы: $prediction",
+                        text = "Вероятность рака предстательной железы:",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = Color.Black
+                    )
+                    Text(
+                        text = prediction.predictionResult,
                         style = MaterialTheme.typography.titleMedium,
                         color = Color(0xFF1A73E8)
+                    )
+                    Text(
+                        text = "Предсказано с вероятностью ${prediction.predictionPresent}",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = Color.Black
                     )
                 }
 
