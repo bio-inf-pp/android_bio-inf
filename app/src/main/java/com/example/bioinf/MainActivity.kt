@@ -65,7 +65,7 @@ class MainActivity : ComponentActivity() {
                                 Tab(
                                     selected = selectedTab == 2,
                                     onClick = { selectedTab = 2 },
-                                    text = { Text(text = "По TSGA") }
+                                    text = { Text(text = "По TCGA") }
                                 )
                             }
 
