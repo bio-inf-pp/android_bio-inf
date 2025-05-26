@@ -73,21 +73,24 @@ fun TCGAPredictionScreen(viewModel: TCGAViewModel) {
                 Spacer(modifier = Modifier.height(16.dp))
 
                 if (prediction.predictionResult != null && prediction.predictionPresent != null) {
-                    Text(
-                        text = "Вероятность рака предстательной железы:",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = Color.Black
-                    )
-                    Text(
-                        text = prediction.predictionResult,
-                        style = MaterialTheme.typography.titleMedium,
-                        color = Color(0xFF1A73E8)
-                    )
-                    Text(
-                        text = "Предсказано с вероятностью ${prediction.predictionPresent}",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = Color.Black
-                    )
+                    Column {
+                        Text(
+                            text = "Вероятность рака предстательной железы:",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = Color.Black
+                        )
+                        Text(
+                            text = prediction.predictionResult,
+                            style = MaterialTheme.typography.titleMedium,
+                            color = Color(0xFF1A73E8)
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = "Предсказано с вероятностью ${prediction.predictionPresent}",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = Color.Black
+                        )
+                    }
                 }
 
                 viewModel.errorMessage.collectAsState().value?.let { message ->

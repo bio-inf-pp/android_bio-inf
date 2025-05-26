@@ -12,8 +12,8 @@ import kotlinx.coroutines.launch
 class PredictionViewModel : ViewModel() {
     private val apiService = ApiService.create()
 
-    private val _predictionResult = MutableStateFlow<Float?>(null)
-    val predictionResult: StateFlow<Float?> = _predictionResult
+    private val _predictionResult = MutableStateFlow(PredictionResult())
+    val predictionResult: StateFlow<PredictionResult> = _predictionResult
 
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage
@@ -35,7 +35,14 @@ class PredictionViewModel : ViewModel() {
                 val request = PredictionRequest(features = features)
                 val response = apiService.predict(request)
 
-                _predictionResult.value = response.prediction
+                _predictionResult.value = PredictionResult(
+                    predictionResult =  "Предсказанный класс вероятности рака - ${response.predicted_label}" +   when(response.predicted_label){
+                        0 -> "\nРака нет"
+                        1 -> "\nРак есть"
+                        else -> "\nНеопозанный результат. Попробуйте снова"
+                    },
+                    predictionPresent = response.prediction
+                )
 
             } catch (e: Exception) {
                 _errorMessage.value = "Ошибка: ${e.localizedMessage}"

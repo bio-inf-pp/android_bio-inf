@@ -18,11 +18,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.example.bioinf.ui.viewmodel.PredictionResult
 
 @Composable
 fun BioInfApplication(
     modifier: Modifier = Modifier,
-    predictionResult: Float?,
+    prediction: PredictionResult,
     isLoading: Boolean,
     errorMessage: String?,
     onClickPredict: (Context) -> Unit,
@@ -48,11 +49,25 @@ fun BioInfApplication(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        predictionResult?.let{
-            Text(
-                text = "Результат: ${predictionResult}",
-                style = MaterialTheme.typography.headlineSmall
-            )
+        if (prediction.predictionResult != null && prediction.predictionPresent != null) {
+            Column {
+                Text(
+                    text = "Вероятность рака предстательной железы:",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = Color.Black
+                )
+                Text(
+                    text = prediction.predictionResult,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = Color(0xFF1A73E8)
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "Предсказано с вероятностью: ${prediction.predictionPresent}",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = Color.Black
+                )
+            }
         }
 
 

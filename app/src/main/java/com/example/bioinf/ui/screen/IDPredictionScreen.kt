@@ -95,12 +95,29 @@ fun IDPredictionScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                predictionResult?.let { result ->
-                    Text(
-                        text = "Вероятность рака предстательной железы: ${result.prediction}",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = Color(0xFF1A73E8)
-                    )
+                if (predictionResult?.prediction != null && predictionResult?.predicted_label != null) {
+                    Column {
+                        Text(
+                            text = "Вероятность рака предстательной железы:",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = Color.Black
+                        )
+                        Text(
+                            text = "Предсказанный класс вероятности рака - ${predictionResult!!.predicted_label}" +   when(predictionResult!!.predicted_label){
+                                0 -> "\nРака нет"
+                                1 -> "\nРак есть"
+                                else -> "\nНеопозанный результат. Попробуйте снова"
+                            },
+                            style = MaterialTheme.typography.titleMedium,
+                            color = Color(0xFF1A73E8)
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = "Предсказано с вероятностью: ${predictionResult!!.prediction}",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = Color.Black
+                        )
+                    }
                 }
 
                 errorMessage?.let {

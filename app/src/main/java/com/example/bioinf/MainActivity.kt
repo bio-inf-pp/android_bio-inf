@@ -77,7 +77,7 @@ class MainActivity : ComponentActivity() {
                                     val context = LocalContext.current
 
                                     BioInfApplication(
-                                        predictionResult = predictionResult,
+                                        prediction = predictionResult,
                                         isLoading = isLoading,
                                         errorMessage = errorMessage,
                                         onClickPredict = {

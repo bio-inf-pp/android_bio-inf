@@ -29,11 +29,11 @@ class TCGAViewModel : ViewModel() {
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                val response = apiService.predictTsgaById(TCGARequest(tcgaId))
+                val response = apiService.predictTcgaById(TCGARequest(tcgaId))
                 _predictionResult.value = PredictionResult(
                     predictionResult =  "Предсказанный класс вероятности рака - ${response.predicted_label}" +   when(response.predicted_label){
                         0 -> "\nРака нет"
-                        1 -> "\nРака есть"
+                        1 -> "\nРак есть"
                         else -> "\nНеопозанный результат. Попробуйте снова"
                     },
                     predictionPresent = response.prediction
