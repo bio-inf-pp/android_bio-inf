@@ -9,8 +9,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class IDPredictionViewModel : ViewModel() {
-    private val apiService = ApiService.create()
+class IDPredictionViewModel(
+    private val apiService: ApiService
+) : ViewModel() {
 
     private val _predictionResult = MutableStateFlow<IDResponse?>(null)
     val predictionResult: StateFlow<IDResponse?> = _predictionResult

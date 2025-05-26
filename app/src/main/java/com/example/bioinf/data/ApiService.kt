@@ -24,9 +24,7 @@ interface ApiService {
     suspend fun predictTcgaById(@Body request: TCGARequest): TCGAResponse
 
     companion object {
-        private const val BASE_URL = "https://582a-34-73-147-116.ngrok-free.app"
-
-        fun create(): ApiService {
+        fun create(baseUrl: String): ApiService {
             val httpClient = OkHttpClient.Builder()
                 .addInterceptor(HttpLoggingInterceptor().apply {
                     level = HttpLoggingInterceptor.Level.BODY
@@ -34,11 +32,12 @@ interface ApiService {
                 .build()
 
             val retrofit = Retrofit.Builder()
-                .baseUrl(BASE_URL)
+                .baseUrl(baseUrl)
                 .client(httpClient)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
             return retrofit.create(ApiService::class.java)
         }
     }
+
 }

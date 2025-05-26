@@ -25,10 +25,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.bioinf.ui.viewmodel.TCGAViewModel
+import com.example.bioinf.ui.viewmodel.TCGAPredictionViewModel
 
 @Composable
-fun TCGAPredictionScreen(viewModel: TCGAViewModel) {
+fun TCGAPredictionScreen(viewModel: TCGAPredictionViewModel) {
     val prediction = viewModel.predictionResult.collectAsState().value
     var tcgaId by remember { mutableStateOf("") }
 

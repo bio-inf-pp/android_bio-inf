@@ -1,81 +1,91 @@
 package com.example.bioinf.ui.screen
 
-import android.content.Context
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
-import com.example.bioinf.ui.viewmodel.PredictionResult
+import com.example.bioinf.ui.viewmodel.FilePredictionViewModel
+import com.example.bioinf.ui.viewmodel.IDPredictionViewModel
+import com.example.bioinf.ui.viewmodel.TCGAPredictionViewModel
 
 @Composable
 fun BioInfApplication(
+    filePredictionViewModel: FilePredictionViewModel,
+    idPredictionViewModel: IDPredictionViewModel,
+    TCGAPredictionViewModel: TCGAPredictionViewModel,
     modifier: Modifier = Modifier,
-    prediction: PredictionResult,
-    isLoading: Boolean,
-    errorMessage: String?,
-    onClickPredict: (Context) -> Unit,
 ) {
-    val context = LocalContext.current
+    var selectedTab by remember { mutableIntStateOf(1) }
 
-    Column(
-        modifier = modifier.fillMaxSize().padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Button(
-            onClick = { onClickPredict(context) },
-            enabled = !isLoading,
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1A73E8))
+    Scaffold { contextPadding ->
+        Surface(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(contextPadding),
+            color = Color(0xFFF5F5F5)
         ) {
-            if (isLoading) {
-                CircularProgressIndicator(color = Color.White)
-            } else {
-                Text("Загрузить файл и предсказать")
-            }
-        }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        if (prediction.predictionResult != null && prediction.predictionPresent != null) {
             Column {
-                Text(
-                    text = "Вероятность рака предстательной железы:",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = Color.Black
-                )
-                Text(
-                    text = prediction.predictionResult,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = Color(0xFF1A73E8)
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = "Предсказано с вероятностью: ${prediction.predictionPresent}",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = Color.Black
-                )
+                // Меню вкладок
+                TabRow(selectedTabIndex = selectedTab) {
+                    Tab(
+                        selected = selectedTab == 0,
+                        onClick = { selectedTab = 0 },
+                        text = { Text(text = "По файлу") }
+                    )
+                    Tab(
+                        selected = selectedTab == 1,
+                        onClick = { selectedTab = 1 },
+                        text = { Text(text = "По ID") }
+                    )
+                    Tab(
+                        selected = selectedTab == 2,
+                        onClick = { selectedTab = 2 },
+                        text = { Text(text = "По TCGA") }
+                    )
+                }
+
+                when (selectedTab) {
+                    0 -> {
+                        val predictionResult by filePredictionViewModel.predictionResult.collectAsState()
+                        val isLoading by filePredictionViewModel.isLoading.collectAsState()
+                        val errorMessage by filePredictionViewModel.errorMessage.collectAsState()
+                        val context = LocalContext.current
+
+                        FilePredictionScreen(
+                            prediction = predictionResult,
+                            isLoading = isLoading,
+                            errorMessage = errorMessage,
+                            onClickPredict = {
+                                filePredictionViewModel.predictFromFile(
+                                    context
+                                )
+                            }
+                        )
+                    }
+
+                    1 -> {
+                        IDPredictionScreen(idPredictionViewModel)
+                    }
+
+                    2 -> {
+                        TCGAPredictionScreen(TCGAPredictionViewModel)
+                    }
+                }
             }
-        }
-
-
-        errorMessage?.let {
-            Text(
-                text = it,
-                color = Color.Red
-            )
         }
     }
 }

@@ -1,16 +1,21 @@
 package com.example.bioinf.ui.viewmodel
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bioinf.data.ApiService
-import com.example.bioinf.model.PredictionRequest
+import com.example.bioinf.model.TCGARequest
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class PredictionViewModel : ViewModel() {
-    private val apiService = ApiService.create()
+data class PredictionResult(
+   val predictionResult: String? = null,
+    val predictionPresent: Double? = null
+)
+
+class TCGAPredictionViewModel(
+    private val apiService: ApiService
+) : ViewModel() {
 
     private val _predictionResult = MutableStateFlow(PredictionResult())
     val predictionResult: StateFlow<PredictionResult> = _predictionResult
@@ -21,20 +26,11 @@ class PredictionViewModel : ViewModel() {
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
-    fun predictFromFile(context: Context) {
+    fun predictById(tcgaId: String) {
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                val features = context.assets.open("features.txt")
-                    .bufferedReader()
-                    .use { it.readText() }
-                    .trim()
-                    .split(",")
-                    .map { it.trim().toDouble() }
-
-                val request = PredictionRequest(features = features)
-                val response = apiService.predict(request)
-
+                val response = apiService.predictTcgaById(TCGARequest(tcgaId))
                 _predictionResult.value = PredictionResult(
                     predictionResult =  "Предсказанный класс вероятности рака - ${response.predicted_label}" +   when(response.predicted_label){
                         0 -> "\nРака нет"
