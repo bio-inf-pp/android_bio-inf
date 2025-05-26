@@ -23,13 +23,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import com.example.bioinf.ui.screen.BioInfApplication
 import com.example.bioinf.ui.screen.IDPredictionScreen
+import com.example.bioinf.ui.screen.TCGAPredictionScreen
 import com.example.bioinf.ui.theme.BioinfTheme
 import com.example.bioinf.ui.viewmodel.IDPredictionViewModel
 import com.example.bioinf.ui.viewmodel.PredictionViewModel
+import com.example.bioinf.ui.viewmodel.TCGAViewModel
 
 class MainActivity : ComponentActivity() {
     private val predictionViewModel: PredictionViewModel by viewModels()
     private val idPredictionViewModel: IDPredictionViewModel by viewModels()
+    private val TCGAViewModel: TCGAViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,6 +62,11 @@ class MainActivity : ComponentActivity() {
                                     onClick = { selectedTab = 1 },
                                     text = { Text(text = "По ID") }
                                 )
+                                Tab(
+                                    selected = selectedTab == 2,
+                                    onClick = { selectedTab = 2 },
+                                    text = { Text(text = "По TSGA") }
+                                )
                             }
 
                             when (selectedTab) {
@@ -82,6 +90,10 @@ class MainActivity : ComponentActivity() {
 
                                 1 -> {
                                     IDPredictionScreen(idPredictionViewModel)
+                                }
+
+                                2 -> {
+                                    TCGAPredictionScreen(TCGAViewModel)
                                 }
                             }
                         }
